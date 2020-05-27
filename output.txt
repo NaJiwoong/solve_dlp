@@ -1,0 +1,13 @@
+< RESULT FOR RSA > 
+20170201 NaJiwoong 
+
+ < SHANKS' ALGORITHM RESULT > 
+
+Value of m: 29
+Value of y: 564
+Value of j: 22
+Value of i: 20
+Answer: 658
+
+----------------------------------------------
+
