@@ -18,6 +18,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <malloc.h>
+#include <math.h>
 
 /* Function for cacalculate multiple mod without overflow */
 
@@ -89,11 +91,32 @@ int64_t inverse(int64_t a,int64_t N){
 	if (t2  < 0){
 		t2 = N + t2;
 	}
-
+	
 	return t2;
 }
 
-int64_t gcd(uint64_t a,uint64_t b){
+int64_t moddiv(int64_t a, int64_t b, int64_t p){
+	int64_t ib = inverse(b, p);
+	return modmult(a, ib, p);
+}
+
+int64_t modplus(int64_t a, int64_t b, int64_t p){
+	int64_t result = a+b;
+	while (result < 0){
+		result += p;
+	}
+	while (result >= p){
+		result -= p;
+	}
+	return result;
+}
+
+int64_t modminus(int64_t a, int64_t b, int64_t p){
+	return modplus(a, -b, p);
+}
+
+
+int64_t gcd(int64_t a,int64_t b){
 	if (a < b){
 		return gcd(b, a);
 	}
@@ -104,14 +127,32 @@ int64_t gcd(uint64_t a,uint64_t b){
 	}
 }
 
+int64_t * factorize(int64_t g, int64_t k, int64_t p, int64_t * s, int64_t plus, int len){
+	int64_t quotient = (mod(p, g, k)+plus);
+	int i;
+	int64_t * relation = calloc(len+1, sizeof(int64_t));
+	relation[len] = k;
 
-
-
-
-
-
-
-
-
+	//printf("quotient: %li, len: %d \n", quotient, len);
+	for (i=0; i<len; i++){
+		while (1){
+			if (quotient % s[i] == 0){
+				quotient = quotient/s[i];
+				relation[i]++;
+			}else{
+				break;
+			}
+		}
+		if (quotient == 1){
+			break;
+		}
+	}
+	if (quotient == 1){
+		return relation;
+	}else{
+		free(relation);
+		return factorize(g, k, p, s, plus+p, len);
+	}
+}
 
 

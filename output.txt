@@ -1,4 +1,4 @@
-< RESULT FOR RSA > 
+< RESULT FOR SOLVING DLP > 
 20170201 NaJiwoong 
 
  < SHANKS' ALGORITHM RESULT > 
@@ -10,4 +10,12 @@ Value of i: 20
 Answer: 658
 
 ----------------------------------------------
+
+< INDEX CALCULUS ALGORITHM RESULT > 
+
+log_(3) (2) = 138  multiple number: 2 
+log_(3) (3) = 1  multiple number: 0 
+log_(3) (5) = 666  multiple number: 1 
+log_(3) (7) = 592  multiple number: 1 
+Answer: 658
 

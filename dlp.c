@@ -17,9 +17,11 @@
 #include <stdint.h>
 #include <math.h>
 #include <malloc.h>
+#include <time.h>
 
 #include "mod.h"
 #include "dlp.h"
+#include "matrix.h"
 
 int tupcmp (const void * a, const void * b){
 	int64_t x = (*((struct tuple *) a)).value;
@@ -97,11 +99,131 @@ int64_t * shanks(int64_t p,int64_t alpha,int64_t beta){
 	return result_list;
 }
 
+int is_prime(int64_t p){
+	int i, N;
+	N = sqrt(p);
+	for (i=2; i<N+1; i++){
+		if (p%i == 0){
+			return 0;
+		}
+	}
+	return 1;
+}
 
+int64_t * less_prime(int64_t p){
+	int i, n, j;
+	n = 0;
+	j = 0;
+	for (i=2; i<p; i++){
+		if (is_prime(i)){
+			n++;
+		}
+	}
+	int64_t * prime_list = malloc(sizeof(int64_t)*n);
+	for (i=2; i<p; i++){
+		if (is_prime(i)){
+			prime_list[j] = i;
+			j++;
+		}
+	}
+	return prime_list;
+}
 
+/* This function is for index_calculus algorithm
+	 Input is p, alpha, beta where we are going to solve
+	 "log_{alpha}(beta) mod p"	*/
+int64_t index_calculus(int64_t p, int64_t g, int64_t y, FILE *fp){
+	int64_t b = 10;
+	int64_t * s = less_prime(b);
+	int n=0;
+	int u=0;
+	for (u=2; u<b; u++){
+		if (is_prime(u)){
+			n++;
+		}
+	}
+	
+	
 
+	int64_t rel_num = 0;
 
+	int64_t **rel_mat = malloc(sizeof(int64_t)*(n+1));
 
+	int check = 0;
+	int i = 0;
+	int j = 0;
+	int64_t k = 1;
+	while (rel_num < n){
+		rel_mat[i] = factorize(g, k, p, s, 0, n);
+
+		/*
+		for (j=0; j<i; j++){
+			if (!independent(rel_mat[i], rel_mat[j], n+1)){
+				check = 1;
+			}
+		}*/
+
+		if (!ref(rel_mat, i+1, n+1, p-1)){
+			check = 1;
+		}
+
+		for (j=0; j<i+1; j++){
+			if (rel_mat[j][j] != 1){
+				check = 1;
+			}
+		}
+
+		if (check == 1){
+			k++;
+			check = 0;
+			continue;
+		}
+
+		k++;
+		i++;
+		rel_num ++;
+	}
+
+	
+	rel_mat[n] = malloc(sizeof(int64_t)*n+1);
+	for (i=0; i<n+1; i++){
+		rel_mat[n][i] = 0;
+	}
+
+	ref2(rel_mat, n+1, n+1, p-1);
+	
+
+	int64_t * sv = malloc(sizeof(int64_t)*n);
+	for (i=0; i<n; i++){
+		sv[i] = moddiv(rel_mat[i][n], rel_mat[i][i], p-1);
+	}
+
+	
+	srand((uint32_t)(time(NULL)));
+	int64_t r = rand()%100;
+	int64_t ygr = modmult(y, mod(p, g, r), p);
+	rel_mat[n] = factorize(ygr, 1, p, s, 0, n);
+	
+	int64_t x = -r;
+	for (i=0; i<n; i++){
+		x += rel_mat[n][i]*sv[i];
+	}
+
+	for (i=0; i<n; i++){
+		fprintf(fp, "log_(%li) (%li) = %li  multiple number: %li \n", g, s[i], sv[i], rel_mat[n][i]);
+	}
+
+	x = modplus(x, 0, p-1);
+
+	free(sv);
+	
+	for (i=0; i<n+1; i++){
+		free(rel_mat[i]);
+	}
+	free(rel_mat);
+
+	return x;
+}
 
 
 

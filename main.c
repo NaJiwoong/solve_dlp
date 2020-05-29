@@ -33,17 +33,17 @@ int main(void){
 	}
 	
 	int64_t p, alpha, beta;
-	//p = 809;
-	//alpha = 3;
-	//beta = 500;
 	p = 809;
 	alpha = 3;
 	beta = 500;
+	//p = 131;
+	//alpha = 2;
+	//beta = 37;
 
 
 	int64_t * result_list = shanks(p, alpha, beta);
 
-	fprintf(fp, "< RESULT FOR RSA > \n");
+	fprintf(fp, "< RESULT FOR SOLVING DLP > \n");
 	fprintf(fp, "20170201 NaJiwoong \n");
 
 	fprintf(fp, "\n < SHANKS' ALGORITHM RESULT > \n\n");
@@ -58,6 +58,12 @@ int main(void){
 
 	/* CASE 2 */
 	
+	fprintf(fp, "< INDEX CALCULUS ALGORITHM RESULT > \n\n");
+	//int64_t x = index_calculus(p, alpha, beta);
+	int64_t x = index_calculus(p, alpha, beta, fp);
+	fprintf(fp, "Answer: %li\n", x);
+	fprintf(fp, "\n");
+
 	fclose(fp);
 	
 	free(result_list);
